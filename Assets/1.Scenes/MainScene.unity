@@ -700,14 +700,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
 --- !u!114 &679450419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -720,9 +712,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 0}
-  m_sendNavigationEvents: 1
-  m_DragThreshold: 10
 --- !u!4 &679450420
 Transform:
   m_ObjectHideFlags: 0
@@ -1026,6 +1015,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2b8dfd7c4a09ae409e700d0fc2775fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 1544987789}
   spawnPosition:
   - {fileID: 1929238350}
   - {fileID: 493405086}
@@ -1039,7 +1029,7 @@ Transform:
   m_GameObject: {fileID: 1517708694}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 18, y: 0, z: 0}
+  m_LocalPosition: {x: 4.03, y: -3.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
