@@ -1,0 +1,20 @@
+using Game.Pool;
+using UnityEngine;
+
+namespace Game
+{
+    public class GameController : MonoBehaviour
+    {
+        [SerializeField] 
+        private PoolContainer poolContainer;
+        [SerializeField] 
+        public MonsterSpawner monsterSpawner;
+
+        private async void Start()
+        {
+            await poolContainer.LoadAsync();
+
+            monsterSpawner.Init(poolContainer);
+        }
+    }
+}
