@@ -1,5 +1,5 @@
-using Cysharp.Threading.Tasks.Triggers;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Game.Monster
 {
@@ -13,12 +13,26 @@ namespace Game.Monster
     
     public class MonsterController : MonoBehaviour
     {
+        public Rigidbody2D rigidbody;
+        public SortingGroup groupLayer;
+        
         private Transform _target;
         private EState _state = EState.None;
 
-        public void Init(Transform target)
+        private int _layer;
+        
+        public void Init(Transform target, int layer)
         {
             _target = target;
+            _layer = layer;
+            
+            SetLayer();
+        }
+
+        private void SetLayer()
+        {
+            gameObject.layer = _layer + 6;
+            groupLayer.sortingOrder = _layer;
         }
 
         private void SetState()
@@ -36,9 +50,15 @@ namespace Game.Monster
 
         private void Run()
         {
-            float dirX = _target.position.x - transform.position.x;
-            Vector3 dir = new Vector3(dirX, 0f, 0f).normalized;
-            transform.position += dir * (2f * Time.fixedDeltaTime);
+            if (_target == null) return;
+
+            float dirX = Mathf.Sign(_target.position.x - transform.position.x);
+            rigidbody.velocity = new Vector2(dirX * 2f, rigidbody.velocity.y);
+        }
+
+        private void Attack()
+        {
+            
         }
 
         private void OnStateFixedUpdate()
@@ -47,6 +67,9 @@ namespace Game.Monster
             {
                 case EState.Run:
                     Run();
+                    break;
+                case EState.Attack:
+                    Attack();
                     break;
             }
         }

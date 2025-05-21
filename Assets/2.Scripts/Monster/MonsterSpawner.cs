@@ -1,4 +1,3 @@
-using System;
 using Cysharp.Threading.Tasks;
 using Game.Pool;
 using UnityEngine;
@@ -7,7 +6,7 @@ using Random = UnityEngine.Random;
 public class MonsterSpawner : MonoBehaviour
 {
     public Transform target;
-    public GameObject[] spawnPosition;      // 0 : 가장 위 /  1 : 중간 / 2 : 가장 밑
+    public GameObject[] spawnPosition;
 
     private PoolContainer _poolContainer;
 
@@ -30,7 +29,7 @@ public class MonsterSpawner : MonoBehaviour
                 await UniTask.Delay(delay);
                 var randomPos = Random.Range(0, spawnPosition.Length);
                 var controller = await _poolContainer.Zombie.Rent(spawnPosition[randomPos].transform);
-                controller.Init(target);
+                controller.Init(target, randomPos);
             }
         }
         catch
