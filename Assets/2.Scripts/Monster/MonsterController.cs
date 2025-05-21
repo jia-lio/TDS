@@ -1,3 +1,5 @@
+using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -14,7 +16,7 @@ namespace Game.Monster
     public class MonsterController : MonoBehaviour
     {
         public Rigidbody2D rigidbody;
-        public BoxCollider2D collider;
+        public CircleCollider2D collider;
         public SortingGroup groupLayer;
         
         private Transform _target;
@@ -26,6 +28,7 @@ namespace Game.Monster
         private float _jumpTargetY;
 
         private bool _isJump;
+        private bool _isBack;
         
         public void Init(Transform target, int layer)
         {
@@ -56,9 +59,10 @@ namespace Game.Monster
 
         private void Run()
         {
-            if (_target == null) return;
+            if (_target == null) 
+                return;
 
-            float dirX = Mathf.Sign(_target.position.x - transform.position.x);
+            var dirX = Mathf.Sign(_target.position.x - transform.position.x);
             rigidbody.velocity = new Vector2(dirX * 2f, rigidbody.velocity.y);
         }
 
@@ -71,17 +75,17 @@ namespace Game.Monster
         {
             if (_isJump)
             {
-                var currentPos = transform.position;
-                var targetPos = new Vector3(currentPos.x, _jumpTargetY, currentPos.z);
-
-                transform.position = Vector3.MoveTowards(currentPos, targetPos, 2 * Time.deltaTime);
-
-                if (Mathf.Abs(transform.position.y - _jumpTargetY) < 0.01f)
-                {
-                    _isJump = false;
-                }
+                rigidbody.velocity = new Vector2(rigidbody.velocity.x, 3f);
+                _isJump = false;
                 
-                return;
+                if (IsLineHitsMonster(Vector2.left * 0.6f, out MonsterController hitMonster))
+                {
+                    if (hitMonster != null)
+                    {
+                        var targetPos = hitMonster.transform.position.x + 1f;
+                        hitMonster.transform.DOMoveX(targetPos, 0.75f);
+                    }
+                }
             }
 
             switch (_state)
@@ -122,9 +126,9 @@ namespace Game.Monster
                     if (transform.position.y + 1.05f > targetY)
                         return;
 
-                    if (IsLineHitsMonster(Vector2.left * 0.5f) && 
-                        IsLineHitsMonster(Vector2.up * 0.75f) == false && 
-                        IsLineHitsMonster(new Vector2(-0.5f, 1)) == false)
+                    if (IsLineHitsMonster(Vector2.left * 0.5f, out _) && 
+                        IsLineHitsMonster(Vector2.up * 0.75f, out _) == false && 
+                        IsLineHitsMonster(new Vector2(-0.5f, 1), out _) == false)
                     {
                         _jumpTargetY = transform.position.y + 1.05f;
                         _isJump = true;
@@ -134,16 +138,18 @@ namespace Game.Monster
             }
         }
 
-        private bool IsLineHitsMonster(Vector2 direction)
+        private bool IsLineHitsMonster(Vector2 direction, out MonsterController hitMonster)
         {
-            var origin = (Vector2)collider.bounds.center;
+            var origin = (Vector2)transform.position + collider.offset;;
             var hits = Physics2D.LinecastAll(origin, origin + direction);
+
+            hitMonster = null;
 
             foreach (var hit in hits)
             {
                 if (hit.collider != null && hit.collider.gameObject != gameObject)
                 {
-                    var hitMonster = hit.collider.GetComponent<MonsterController>();
+                    hitMonster = hit.collider.GetComponent<MonsterController>();
                     if (hitMonster != null && hitMonster.gameObject.layer == gameObject.layer)
                     {
                         return true;
@@ -152,6 +158,17 @@ namespace Game.Monster
             }
             
             return false;
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            var start = (Vector2)transform.position + collider.offset;
+            var end = (Vector2)start + Vector2.left * 0.6f;
+            
+            Gizmos.DrawLine(start, end);
+            
+            
         }
     }
 }
