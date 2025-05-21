@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4413389680028345600}
   m_Layer: 6
   m_Name: ZombieMelee
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -83,6 +83,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rigidbody: {fileID: 8260943378693207130}
+  collider: {fileID: 4413389680028345600}
   groupLayer: {fileID: 108522781097812052}
 --- !u!50 &8260943378693207130
 Rigidbody2D:
