@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1174570720321624928}
   - component: {fileID: 7016750400611631704}
+  - component: {fileID: 4906819888095915515}
   - component: {fileID: 108522781097812052}
-  - component: {fileID: 1781071444550683628}
   - component: {fileID: 8260943378693207130}
   - component: {fileID: 4413389680028345600}
   m_Layer: 6
@@ -58,6 +58,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4906819888095915515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 319310827380095937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4a99417b7135d645ab0c73c02d7f581, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rigidbody: {fileID: 8260943378693207130}
+  collider: {fileID: 4413389680028345600}
+  groupLayer: {fileID: 108522781097812052}
 --- !u!210 &108522781097812052
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -70,21 +85,6 @@ SortingGroup:
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_SortAtRoot: 0
---- !u!114 &1781071444550683628
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 319310827380095937}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 214d3c816442eae4eb66ef15120bfe02, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rigidbody: {fileID: 8260943378693207130}
-  collider: {fileID: 4413389680028345600}
-  groupLayer: {fileID: 108522781097812052}
 --- !u!50 &8260943378693207130
 Rigidbody2D:
   serializedVersion: 4

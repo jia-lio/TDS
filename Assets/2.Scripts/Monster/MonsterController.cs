@@ -26,8 +26,6 @@ namespace Game.Monster
         private float _jumpTargetY;
 
         private bool _isJump;
-
-        private RaycastHit2D[] _results = new RaycastHit2D[100];
         
         public void Init(Transform target, int layer)
         {
@@ -124,78 +122,22 @@ namespace Game.Monster
                     if (transform.position.y + 1.05f > targetY)
                         return;
 
-                    if (IsLeftHit() && IsUpHit() == false && IsUpLeftHit() == false)
+                    if (IsLineHitsMonster(Vector2.left * 0.5f) && 
+                        IsLineHitsMonster(Vector2.up * 0.75f) == false && 
+                        IsLineHitsMonster(new Vector2(-0.5f, 1)) == false)
                     {
                         _jumpTargetY = transform.position.y + 1.05f;
                         _isJump = true;
                         _lastJumpTime = Time.time;
                     }
-
-                    IsLeftHit();
                 }
             }
         }
-        
-        private void OnDrawGizmos()
-        {
-            // 큐브 색상 지정
-            Gizmos.color = Color.magenta;
 
-            // Bounds 기준으로 WireCube 표시
-            Gizmos.DrawWireCube(collider.bounds.center, collider.bounds.size);
-            
-            Vector2 origin = collider.bounds.center;
-            Vector2 end = origin + new Vector2(-0.5f, 1);
-
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(origin, end);
-
-        }
-        
-        private bool IsLeftHit()
+        private bool IsLineHitsMonster(Vector2 direction)
         {
             var origin = (Vector2)collider.bounds.center;
-            var hits = Physics2D.LinecastAll(origin, origin + Vector2.left * 0.5f);
-
-            foreach (var hit in hits)
-            {
-                if (hit.collider != null && hit.collider.gameObject != gameObject)
-                {
-                    var hitMonster = hit.collider.GetComponent<MonsterController>();
-                    if (hitMonster != null && hitMonster.gameObject.layer == gameObject.layer)
-                    {
-                        return true;
-                    }
-                }
-            }
-            
-            return false;
-        }
-
-        private bool IsUpHit()
-        {
-            var origin = (Vector2)collider.bounds.center;
-            var hits = Physics2D.LinecastAll(origin, origin + Vector2.up * 0.75f);
-
-            foreach (var hit in hits)
-            {
-                if (hit.collider != null && hit.collider.gameObject != gameObject)
-                {
-                    var hitMonster = hit.collider.GetComponent<MonsterController>();
-                    if (hitMonster != null && hitMonster.gameObject.layer == gameObject.layer)
-                    {
-                        return true;
-                    }
-                }
-            }
-            
-            return false;
-        }
-
-        private bool IsUpLeftHit()
-        {
-            var origin = (Vector2)collider.bounds.center;
-            var hits = Physics2D.LinecastAll(origin, origin + new Vector2(-0.5f, 1));
+            var hits = Physics2D.LinecastAll(origin, origin + direction);
 
             foreach (var hit in hits)
             {
