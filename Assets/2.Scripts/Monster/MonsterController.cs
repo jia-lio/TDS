@@ -54,7 +54,7 @@ namespace Game.Monster
                 return;
             
             var distanceX = Mathf.Abs(_target.position.x - transform.position.x);
-            if (distanceX < 1.7f)
+            if (distanceX < 1.6f)
             {
                 _state = EState.Attack;
             }
@@ -231,11 +231,6 @@ namespace Game.Monster
             Gizmos.DrawLine(start, start + Vector2.up);
             Gizmos.DrawLine(start, start + new Vector2(-0.5f, 0.75f));
             Gizmos.DrawLine(start, start + Vector2.down * 0.5f);
-            
-            // 공격 범위(10f)를 시각적으로 표시
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawLine(_target.transform.position, _target.transform.position + Vector3.right * 1.5f);
-
         }
     }
 }
