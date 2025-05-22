@@ -1,5 +1,4 @@
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -16,25 +15,29 @@ namespace Game.Monster
     
     public class MonsterController : MonoBehaviour
     {
+        public Animator ani;
         public Rigidbody2D rigidbody;
         public CircleCollider2D collider;
         public SortingGroup groupLayer;
         
         private Transform _target;
-        private EState _state = EState.Run;
+        private EState _state = EState.None;
 
         private int _layer;
-        private float _jumpCoolTime = 3f;
+        private int _monsterSpeed = 2;
+        private float _jumpCoolTime;
         private float _lastJumpTime = -1f;
 
         private bool _isJump;
-        private bool _isBack;
         private bool _isWait;
+        private bool _isAttackWait;
         
         public void Init(Transform target, int layer)
         {
             _target = target;
             _layer = layer;
+
+            _jumpCoolTime = Random.Range(3f, 10f);
             
             SetLayer();
         }
@@ -47,8 +50,11 @@ namespace Game.Monster
 
         private void SetState()
         {
+            if(_state == EState.Stop)
+                return;
+            
             var distanceX = Mathf.Abs(_target.position.x - transform.position.x);
-            if (distanceX < 1.5f)
+            if (distanceX < 1.7f)
             {
                 _state = EState.Attack;
             }
@@ -57,22 +63,32 @@ namespace Game.Monster
                 _state = EState.Run;
             }
         }
-
+        
         private void Run()
         {
             if (_target == null) 
                 return;
 
-            var dirX = Mathf.Sign(_target.position.x - transform.position.x);
-            rigidbody.velocity = new Vector2(dirX * 2f, rigidbody.velocity.y);
+            _isAttackWait = false;
+
+            // 공중
+            if (IsLineHitGround(Vector2.down * 0.75f, _layer) == false &&
+                IsLineHitsMonster(Vector2.down * 0.75f, out _) == false)
+                return;
+            
+            SetAnimation("IsAttacking", false);
+            rigidbody.velocity = new Vector2( -_monsterSpeed, rigidbody.velocity.y);
         }
 
         private void Attack()
         {
+            if(_isAttackWait || _state == EState.Stop)
+                return;
             
+            SetAnimation("IsAttacking");
         }
         
-        private async UniTask OnStateFixedUpdate()
+        private void OnStateFixedUpdate()
         {
             _isWait = true;
             
@@ -96,9 +112,14 @@ namespace Game.Monster
             _isWait = false;
         }
 
+        public void OnAttack()
+        {
+            Debug.Log("데미지");
+        }
+
         private async UniTask HitMonsterBackMoving()
         {
-            await UniTask.Delay(600);
+            await UniTask.Delay(650);
                 
             if (IsLineHitsMonster(Vector2.down * 0.5f, out var hitMonster))
             {
@@ -113,13 +134,13 @@ namespace Game.Monster
             }
         }
 
-        private async void FixedUpdate()
+        private void FixedUpdate()
         {
-            //SetState();
             if(_isWait)
                 return;
-            
-            await OnStateFixedUpdate();
+
+            SetState();
+            OnStateFixedUpdate();
         }
 
         private void OnCollisionStay2D(Collision2D collision)
@@ -175,7 +196,32 @@ namespace Game.Monster
             
             return false;
         }
+        
+        private bool IsLineHitGround(Vector2 direction, int layer)
+        {
+            var origin = (Vector2)transform.position + collider.offset;;
+            var hits = Physics2D.LinecastAll(origin, origin + direction);
+            var groundLayer = layer + 9;
+            
+            foreach (var hit in hits)
+            {
+                if (hit.collider != null && hit.collider.gameObject != gameObject)
+                {
+                    if (hit.transform.gameObject.layer == groundLayer)
+                    {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        }
 
+        private void SetAnimation(string aniName, bool isValue = true)
+        {
+            ani.SetBool(aniName, isValue);
+        }
+        
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
@@ -185,6 +231,11 @@ namespace Game.Monster
             Gizmos.DrawLine(start, start + Vector2.up);
             Gizmos.DrawLine(start, start + new Vector2(-0.5f, 0.75f));
             Gizmos.DrawLine(start, start + Vector2.down * 0.5f);
+            
+            // 공격 범위(10f)를 시각적으로 표시
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(_target.transform.position, _target.transform.position + Vector3.right * 1.5f);
+
         }
     }
 }

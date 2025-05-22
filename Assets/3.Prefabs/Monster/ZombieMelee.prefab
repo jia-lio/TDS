@@ -72,6 +72,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4a99417b7135d645ab0c73c02d7f581, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ani: {fileID: 7016750400611631704}
   rigidbody: {fileID: 8260943378693207130}
   collider: {fileID: 400544541585039617}
   groupLayer: {fileID: 108522781097812052}
