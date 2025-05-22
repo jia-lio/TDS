@@ -80,7 +80,7 @@ namespace Game.Monster
             {
                 rigidbody.velocity = new Vector2(-1f, 7f);
                 _isJump = false;
-                Test().Forget();
+                HitMonsterBackMoving().Forget();
             }
 
             switch (_state)
@@ -96,7 +96,7 @@ namespace Game.Monster
             _isWait = false;
         }
 
-        private async UniTask Test()
+        private async UniTask HitMonsterBackMoving()
         {
             await UniTask.Delay(600);
                 
@@ -105,9 +105,9 @@ namespace Game.Monster
                 if (hitMonster != null)
                 {
                     hitMonster._state = EState.Stop;
-                    hitMonster.rigidbody.AddForce(Vector2.right * 8f, ForceMode2D.Impulse);
+                    hitMonster.rigidbody.AddForce(Vector2.right * 7f, ForceMode2D.Impulse);
                         
-                    await UniTask.Delay(300);
+                    await UniTask.Delay(350);
                     hitMonster._state = EState.Run;
                 }
             }
