@@ -86,6 +86,7 @@ namespace Game.Monster
                 return;
             
             SetAnimation("IsAttacking");
+            rigidbody.velocity = new Vector2( -_monsterSpeed, rigidbody.velocity.y);
         }
         
         private void OnStateFixedUpdate()
@@ -119,7 +120,7 @@ namespace Game.Monster
 
         private async UniTask HitMonsterBackMoving()
         {
-            await UniTask.Delay(650);
+            await UniTask.Delay(600);
                 
             if (IsLineHitsMonster(Vector2.down * 0.5f, out var hitMonster))
             {
@@ -128,7 +129,7 @@ namespace Game.Monster
                     hitMonster._state = EState.Stop;
                     hitMonster.rigidbody.AddForce(Vector2.right * 7f, ForceMode2D.Impulse);
                         
-                    await UniTask.Delay(350);
+                    await UniTask.Delay(400);
                     hitMonster._state = EState.Run;
                 }
             }
