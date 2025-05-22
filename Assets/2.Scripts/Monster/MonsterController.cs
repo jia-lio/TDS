@@ -100,7 +100,7 @@ namespace Game.Monster
         {
             await UniTask.Delay(600);
                 
-            if (IsLineHitsMonster(Vector2.down * 0.5f, out MonsterController hitMonster))
+            if (IsLineHitsMonster(Vector2.down * 0.5f, out var hitMonster))
             {
                 if (hitMonster != null)
                 {
