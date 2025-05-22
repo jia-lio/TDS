@@ -25,7 +25,7 @@ public class MonsterSpawner : MonoBehaviour
         {
             for (int i = 0; i < MONSTER_MAX_COUNT; i++)
             {
-                var delay = Random.Range(1000, 2000);
+                var delay = Random.Range(5000, 10000);
                 await UniTask.Delay(delay);
                 var randomPos = Random.Range(0, spawnPosition.Length);
                 var controller = await _poolContainer.Zombie.Rent(spawnPosition[0].transform);

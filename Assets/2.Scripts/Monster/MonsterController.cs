@@ -1,4 +1,4 @@
-using System;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -11,6 +11,7 @@ namespace Game.Monster
         Attack,
         Die,
         Run,
+        Stop,
     }
     
     public class MonsterController : MonoBehaviour
@@ -20,15 +21,15 @@ namespace Game.Monster
         public SortingGroup groupLayer;
         
         private Transform _target;
-        private EState _state = EState.None;
+        private EState _state = EState.Run;
 
         private int _layer;
-        private float _jumpCoolTime = 1f;
+        private float _jumpCoolTime = 3f;
         private float _lastJumpTime = -1f;
-        private float _jumpTargetY;
 
         private bool _isJump;
         private bool _isBack;
+        private bool _isWait;
         
         public void Init(Transform target, int layer)
         {
@@ -71,21 +72,15 @@ namespace Game.Monster
             
         }
         
-        private void OnStateFixedUpdate()
+        private async UniTask OnStateFixedUpdate()
         {
+            _isWait = true;
+            
             if (_isJump)
             {
-                rigidbody.velocity = new Vector2(rigidbody.velocity.x, 3f);
+                rigidbody.velocity = new Vector2(-1f, 7f);
                 _isJump = false;
-                
-                if (IsLineHitsMonster(Vector2.left * 0.6f, out MonsterController hitMonster))
-                {
-                    if (hitMonster != null)
-                    {
-                        var targetPos = hitMonster.transform.position.x + 1f;
-                        hitMonster.transform.DOMoveX(targetPos, 0.75f);
-                    }
-                }
+                Test().Forget();
             }
 
             switch (_state)
@@ -97,12 +92,34 @@ namespace Game.Monster
                     Attack();
                     break;
             }
+
+            _isWait = false;
         }
 
-        private void FixedUpdate()
+        private async UniTask Test()
         {
-            SetState();
-            OnStateFixedUpdate();
+            await UniTask.Delay(600);
+                
+            if (IsLineHitsMonster(Vector2.down * 0.5f, out MonsterController hitMonster))
+            {
+                if (hitMonster != null)
+                {
+                    hitMonster._state = EState.Stop;
+                    hitMonster.rigidbody.AddForce(Vector2.right * 8f, ForceMode2D.Impulse);
+                        
+                    await UniTask.Delay(300);
+                    hitMonster._state = EState.Run;
+                }
+            }
+        }
+
+        private async void FixedUpdate()
+        {
+            //SetState();
+            if(_isWait)
+                return;
+            
+            await OnStateFixedUpdate();
         }
 
         private void OnCollisionStay2D(Collision2D collision)
@@ -125,12 +142,11 @@ namespace Game.Monster
                     var targetY = _target.position.y - 2f;
                     if (transform.position.y + 1.05f > targetY)
                         return;
-
+                    
                     if (IsLineHitsMonster(Vector2.left * 0.5f, out _) && 
-                        IsLineHitsMonster(Vector2.up * 0.75f, out _) == false && 
-                        IsLineHitsMonster(new Vector2(-0.5f, 1), out _) == false)
+                        IsLineHitsMonster(Vector2.up, out _) == false && 
+                        IsLineHitsMonster(new Vector2(-0.5f, 0.75f), out _) == false)
                     {
-                        _jumpTargetY = transform.position.y + 1.05f;
                         _isJump = true;
                         _lastJumpTime = Time.time;
                     }
@@ -164,11 +180,11 @@ namespace Game.Monster
         {
             Gizmos.color = Color.red;
             var start = (Vector2)transform.position + collider.offset;
-            var end = (Vector2)start + Vector2.left * 0.6f;
             
-            Gizmos.DrawLine(start, end);
-            
-            
+            Gizmos.DrawLine(start, start + Vector2.left * 0.5f);
+            Gizmos.DrawLine(start, start + Vector2.up);
+            Gizmos.DrawLine(start, start + new Vector2(-0.5f, 0.75f));
+            Gizmos.DrawLine(start, start + Vector2.down * 0.5f);
         }
     }
 }
