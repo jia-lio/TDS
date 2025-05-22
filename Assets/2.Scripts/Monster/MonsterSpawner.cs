@@ -10,7 +10,7 @@ public class MonsterSpawner : MonoBehaviour
 
     private PoolContainer _poolContainer;
 
-    private const int MONSTER_MAX_COUNT = 10;
+    private const int MONSTER_MAX_COUNT = 100;
     
     public async void Init(PoolContainer poolContainer)
     {
@@ -25,11 +25,11 @@ public class MonsterSpawner : MonoBehaviour
         {
             for (int i = 0; i < MONSTER_MAX_COUNT; i++)
             {
-                var delay = Random.Range(200, 2000);
+                var delay = Random.Range(5000, 10000);
                 await UniTask.Delay(delay);
                 var randomPos = Random.Range(0, spawnPosition.Length);
-                var controller = await _poolContainer.Zombie.Rent(spawnPosition[randomPos].transform);
-                controller.Init(target, randomPos);
+                var controller = await _poolContainer.Zombie.Rent(spawnPosition[0].transform);
+                controller.Init(target, 0);
             }
         }
         catch
