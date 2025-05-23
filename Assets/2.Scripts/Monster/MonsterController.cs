@@ -129,7 +129,7 @@ namespace Game.Monster
                     hitMonster._state = EState.Stop;
                     hitMonster.rigidbody.AddForce(Vector2.right * 7f, ForceMode2D.Impulse);
                         
-                    await UniTask.Delay(400);
+                    await UniTask.Delay(300);
                     hitMonster._state = EState.Run;
                 }
             }
