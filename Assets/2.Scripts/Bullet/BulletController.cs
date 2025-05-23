@@ -12,6 +12,7 @@ namespace Game.Hero.Bullet
         private Vector2 _direction;
 
         private float _speed = 15f;
+        private int _damage = 1;
         
         public void Fire(Vector2 direction)
         {
@@ -34,7 +35,7 @@ namespace Game.Hero.Bullet
                 var target = other.gameObject.GetComponent<MonsterController>();
                 if (target != null)
                 {
-                    target.Hit();
+                    target.Hit(_damage);
                     OnReturn?.Invoke();
                 }
             }

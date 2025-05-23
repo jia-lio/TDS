@@ -1,6 +1,8 @@
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Random = UnityEngine.Random;
 
 namespace Game.Monster
 {
@@ -19,12 +21,15 @@ namespace Game.Monster
         public Rigidbody2D rigidbody;
         public CircleCollider2D collider;
         public SortingGroup groupLayer;
+
+        public Action OnReturn;
         
         private Transform _target;
         private EState _state = EState.None;
 
         private int _layer;
         private int _monsterSpeed = 2;
+        private int _hp = 2;
         private float _jumpCoolTime;
         private float _lastJumpTime = -1f;
 
@@ -223,9 +228,30 @@ namespace Game.Monster
             ani.SetBool(aniName, isValue);
         }
 
-        public void Hit()
+        public void Hit(int damage)
         {
-            Debug.Log("데미지 입음");
+            _hp -= damage;
+
+            if (IsDie())
+            {
+                Die().Forget();
+            }
+        }
+
+        private async UniTask Die()
+        {
+            SetAnimation("IsDead");
+            
+            await UniTask.Delay(1000);
+            OnReturn?.Invoke();
+        }
+
+        private bool IsDie()
+        {
+            if (_hp <= 0)
+                return true;
+            
+            return false;
         }
         
         private void OnDrawGizmos()

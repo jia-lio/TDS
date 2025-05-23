@@ -30,6 +30,10 @@ public class MonsterSpawner : MonoBehaviour
                 var randomPos = Random.Range(0, spawnPosition.Length);
                 var controller = await _poolContainer.Zombie.Rent(spawnPosition[randomPos].transform);
                 controller.Init(target, randomPos);
+                controller.OnReturn = () =>
+                {
+                    _poolContainer.Zombie.Return(controller);
+                };
             }
         }
         catch
