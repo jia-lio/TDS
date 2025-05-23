@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Game.Monster;
 using Game.Pool;
 using UnityEngine;
@@ -7,6 +8,8 @@ namespace Game.Hero
 {
     public class HeroController : MonoBehaviour
     {
+        public SpriteRenderer gun;
+        
         private PoolContainer _poolContainer;
 
         private MonsterController _targetMonster;
@@ -44,6 +47,8 @@ namespace Game.Hero
 
             while (true)
             {
+                var angle = Mathf.Atan2(_targetMonster.transform.position.y, _targetMonster.transform.position.x) * Mathf.Rad2Deg;
+                gun.transform.DORotate(new Vector3(0, 0, angle), 0.1f);
                 await CreatBullet();
                 await UniTask.Delay(5000);
             }

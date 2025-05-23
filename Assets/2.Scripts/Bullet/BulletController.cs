@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using Game.Monster;
 using UnityEngine;
 
@@ -11,13 +12,15 @@ namespace Game.Hero.Bullet
         private bool _isFiring;
         private Vector2 _direction;
 
-        private float _speed = 15f;
+        private float _speed = 20f;
         private int _damage = 1;
         
         public void Fire(Vector2 direction)
         {
             _direction = (direction - (Vector2)transform.position).normalized;
             _isFiring = true;
+            
+            AutoReturnAsync().Forget();
         }
 
         public void Update()
@@ -26,6 +29,12 @@ namespace Game.Hero.Bullet
             {
                 transform.position += (Vector3)(_direction * _speed * Time.deltaTime);
             }
+        }
+
+        private async UniTaskVoid AutoReturnAsync()
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(1.5f));
+            OnReturn?.Invoke();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
