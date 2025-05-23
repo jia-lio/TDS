@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.Triggers;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Object = UnityEngine.Object;
@@ -64,6 +65,7 @@ namespace Game.Pool
             component.gameObject.SetActive(false);
             component.transform.SetParent(_parent);
             _components.Enqueue(component);
+            component.gameObject.OnDestroyAsync();
         }
 
         public void Dispose()

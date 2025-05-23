@@ -115,7 +115,7 @@ namespace Game.Monster
 
         public void OnAttack()
         {
-            Debug.Log("데미지");
+            //Debug.Log("데미지");
         }
 
         private async UniTask HitMonsterBackMoving()

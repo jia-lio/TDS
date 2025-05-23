@@ -12,8 +12,8 @@ namespace Game.Pool
 
         public async UniTask LoadAsync()
         {
-            Zombie = CreatePool<MonsterController>("Monster/ZombieMelee.prefab", 50);
-            Bullet = CreatePool<BulletController>("Bullet/Bullet.prefab", 10);
+            Zombie = CreatePool<MonsterController>("Assets/3.Prefabs/Monster/ZombieMelee.prefab", 50);
+            Bullet = CreatePool<BulletController>("Assets/3.Prefabs/Bullet/Bullet.prefab", 10);
         }
 
         private AddressablePool<T> CreatePool<T>(string key, int capacity = 0) where T : Component

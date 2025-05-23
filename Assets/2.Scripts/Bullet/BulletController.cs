@@ -7,15 +7,34 @@ namespace Game.Hero.Bullet
     public class BulletController : MonoBehaviour
     {
         public Action OnReturn;
+
+        private bool _isFiring;
+        private Vector2 _direction;
+
+        private float _speed = 15f;
         
-        private void OnCollisionEnter2D(Collision2D collision)
+        public void Fire(Vector2 direction)
         {
-            if (collision.gameObject.CompareTag("Monster"))
+            _direction = (direction - (Vector2)transform.position).normalized;
+            _isFiring = true;
+        }
+
+        public void Update()
+        {
+            if (_isFiring)
             {
-                var other = collision.gameObject.GetComponent<MonsterController>();
-                if (other != null)
+                transform.position += (Vector3)(_direction * _speed * Time.deltaTime);
+            }
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.gameObject.CompareTag("Monster"))
+            {
+                var target = other.gameObject.GetComponent<MonsterController>();
+                if (target != null)
                 {
-                    other.Hit();
+                    target.Hit();
                     OnReturn?.Invoke();
                 }
             }
