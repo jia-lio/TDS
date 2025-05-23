@@ -1,6 +1,8 @@
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Random = UnityEngine.Random;
 
 namespace Game.Monster
 {
@@ -8,9 +10,9 @@ namespace Game.Monster
     {
         None,
         Attack,
-        Die,
         Run,
         Stop,
+        Die
     }
     
     public class MonsterController : MonoBehaviour
@@ -19,12 +21,17 @@ namespace Game.Monster
         public Rigidbody2D rigidbody;
         public CircleCollider2D collider;
         public SortingGroup groupLayer;
+        public SpriteRenderer hpBar;
+
+        public Action OnReturn;
         
         private Transform _target;
         private EState _state = EState.None;
 
         private int _layer;
         private int _monsterSpeed = 2;
+        private int _maxHp = 2;
+        private int _hp = 2;
         private float _jumpCoolTime;
         private float _lastJumpTime = -1f;
 
@@ -40,6 +47,18 @@ namespace Game.Monster
             _jumpCoolTime = Random.Range(3f, 10f);
             
             SetLayer();
+            SetHp();
+        }
+
+        public EState GetState()
+        {
+            return _state;
+        }
+
+        private void SetHp()
+        {
+            hpBar.material.SetInt("_LineCount", _maxHp);
+            hpBar.material.SetInt("_FilledLines", _hp);
         }
 
         private void SetLayer()
@@ -50,7 +69,7 @@ namespace Game.Monster
 
         private void SetState()
         {
-            if(_state == EState.Stop)
+            if(_state == EState.Stop || _state == EState.Die)
                 return;
             
             var distanceX = Mathf.Abs(_target.position.x - transform.position.x);
@@ -108,6 +127,9 @@ namespace Game.Monster
                 case EState.Attack:
                     Attack();
                     break;
+                case EState.Die:
+                    rigidbody.velocity = Vector2.zero;
+                    break;
             }
 
             _isWait = false;
@@ -115,7 +137,7 @@ namespace Game.Monster
 
         public void OnAttack()
         {
-            Debug.Log("데미지");
+            //Debug.Log("데미지");
         }
 
         private async UniTask HitMonsterBackMoving()
@@ -221,6 +243,35 @@ namespace Game.Monster
         private void SetAnimation(string aniName, bool isValue = true)
         {
             ani.SetBool(aniName, isValue);
+        }
+
+        public void Hit(int damage)
+        {
+            _hp -= damage;
+            SetHp();
+
+            if (IsDie())
+            {
+                Die().Forget();
+            }
+        }
+
+        private async UniTask Die()
+        {
+            _state = EState.Die;
+            
+            SetAnimation("IsDead");
+            
+            await UniTask.Delay(1000);
+            OnReturn?.Invoke();
+        }
+
+        private bool IsDie()
+        {
+            if (_hp <= 0)
+                return true;
+            
+            return false;
         }
         
         private void OnDrawGizmos()
