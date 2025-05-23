@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Monster
+  - Ground
+  - Hero
   layers:
   - Default
   - TransparentFX
@@ -18,7 +20,7 @@ TagManager:
   - Ground
   - Ground_1
   - Ground_2
-  - 
+  - Hero
   - 
   - 
   - 
