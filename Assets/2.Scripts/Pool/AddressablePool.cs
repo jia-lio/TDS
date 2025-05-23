@@ -55,7 +55,17 @@ namespace Game.Pool
 
             return component;
         }
-        
+
+        public void Return(T component)
+        {
+            if (component == null || _components.Contains(component))
+                return;
+            
+            component.gameObject.SetActive(false);
+            component.transform.SetParent(_parent);
+            _components.Enqueue(component);
+        }
+
         public void Dispose()
         {
             try

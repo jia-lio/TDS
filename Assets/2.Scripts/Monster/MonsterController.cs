@@ -222,6 +222,11 @@ namespace Game.Monster
         {
             ani.SetBool(aniName, isValue);
         }
+
+        public void Hit()
+        {
+            Debug.Log("데미지 입음");
+        }
         
         private void OnDrawGizmos()
         {
