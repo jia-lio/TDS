@@ -13,7 +13,7 @@ namespace Game.Hero.Bullet
         private Vector2 _direction;
 
         private float _speed = 20f;
-        private int _damage = 1;
+        private int _damage = 2;
         
         public void Fire(Vector2 direction)
         {

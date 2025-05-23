@@ -40,17 +40,24 @@ namespace Game.Hero
 
         private async UniTaskVoid AttackLoop()
         {
-            if(_targetMonster == null)
+            if (_targetMonster == null)
                 return;
             
             _isAttacking = true;
 
             while (true)
             {
+                if(_targetMonster.GetState() == EState.Die)
+                {
+                    _targetMonster = null;
+                    _isAttacking = false;
+                    break;
+                }
+                    
                 var angle = Mathf.Atan2(_targetMonster.transform.position.y, _targetMonster.transform.position.x) * Mathf.Rad2Deg;
                 gun.transform.DORotate(new Vector3(0, 0, angle), 0.1f);
                 await CreatBullet();
-                await UniTask.Delay(5000);
+                await UniTask.Delay(3000);
             }
         }
 
@@ -60,7 +67,7 @@ namespace Game.Hero
                 return;
 
             var target = other.transform.gameObject.GetComponent<MonsterController>();
-            if (target != null)
+            if (target != null && target.GetState() != EState.Die)
             {
                 _targetMonster = target;
 

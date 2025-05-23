@@ -10,9 +10,9 @@ namespace Game.Monster
     {
         None,
         Attack,
-        Die,
         Run,
         Stop,
+        Die
     }
     
     public class MonsterController : MonoBehaviour
@@ -21,6 +21,7 @@ namespace Game.Monster
         public Rigidbody2D rigidbody;
         public CircleCollider2D collider;
         public SortingGroup groupLayer;
+        public SpriteRenderer hpBar;
 
         public Action OnReturn;
         
@@ -29,6 +30,7 @@ namespace Game.Monster
 
         private int _layer;
         private int _monsterSpeed = 2;
+        private int _maxHp = 2;
         private int _hp = 2;
         private float _jumpCoolTime;
         private float _lastJumpTime = -1f;
@@ -45,6 +47,18 @@ namespace Game.Monster
             _jumpCoolTime = Random.Range(3f, 10f);
             
             SetLayer();
+            SetHp();
+        }
+
+        public EState GetState()
+        {
+            return _state;
+        }
+
+        private void SetHp()
+        {
+            hpBar.material.SetInt("_LineCount", _maxHp);
+            hpBar.material.SetInt("_FilledLines", _hp);
         }
 
         private void SetLayer()
@@ -55,7 +69,7 @@ namespace Game.Monster
 
         private void SetState()
         {
-            if(_state == EState.Stop)
+            if(_state == EState.Stop || _state == EState.Die)
                 return;
             
             var distanceX = Mathf.Abs(_target.position.x - transform.position.x);
@@ -112,6 +126,9 @@ namespace Game.Monster
                     break;
                 case EState.Attack:
                     Attack();
+                    break;
+                case EState.Die:
+                    rigidbody.velocity = Vector2.zero;
                     break;
             }
 
@@ -231,6 +248,7 @@ namespace Game.Monster
         public void Hit(int damage)
         {
             _hp -= damage;
+            SetHp();
 
             if (IsDie())
             {
@@ -240,6 +258,8 @@ namespace Game.Monster
 
         private async UniTask Die()
         {
+            _state = EState.Die;
+            
             SetAnimation("IsDead");
             
             await UniTask.Delay(1000);
